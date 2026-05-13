@@ -25,6 +25,8 @@ export default function CampaignsPage() {
     onSuccess:  () => qc.invalidateQueries({ queryKey: ["campaigns"] }),
   });
 
+  const safeCampaigns = Array.isArray(campaigns) ? campaigns : [];
+
   if (isLoading) {
     return <div className="p-8 text-gray-400">Loading campaigns…</div>;
   }
@@ -41,14 +43,14 @@ export default function CampaignsPage() {
         </Link>
       </div>
 
-      {campaigns.length === 0 ? (
+      {safeCampaigns.length === 0 ? (
         <div className="text-center py-20 text-gray-400">
           <Mail size={40} className="mx-auto mb-3 opacity-30" />
           <p>No campaigns yet. Create your first one.</p>
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
-          {campaigns.map((c) => (
+          {safeCampaigns.map((c) => (
             <div key={c.campaignId} className="flex items-center justify-between p-4">
               <div>
                 <p className="font-medium text-gray-900">{c.name}</p>

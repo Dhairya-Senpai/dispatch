@@ -6,26 +6,26 @@ import { Mail, Users, MousePointerClick, TrendingUp } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function DashboardPage() {
-  const { data: campaigns = [] } = useQuery({
+  const { data: rawCampaigns } = useQuery({
     queryKey: ["campaigns"],
     queryFn: campaignApi.list,
   });
 
-const safeCampaigns = Array.isArray(campaigns) ? campaigns : [];
+  const campaigns = Array.isArray(rawCampaigns) ? rawCampaigns : [];
 
-const sent        = safeCampaigns.filter((c) => c.status === "sent").length;
-const sending     = safeCampaigns.filter((c) => c.status === "sending").length;
-const totalOpens  = safeCampaigns.reduce((s, c) => s + (c.openCount ?? 0), 0);
-const totalClicks = safeCampaigns.reduce((s, c) => s + (c.clickCount ?? 0), 0);
+  const sent        = campaigns.filter((c) => c.status === "sent").length;
+  const sending     = campaigns.filter((c) => c.status === "sending").length;
+  const totalOpens  = campaigns.reduce((s, c) => s + (c.openCount ?? 0), 0);
+  const totalClicks = campaigns.reduce((s, c) => s + (c.clickCount ?? 0), 0);
 
-const chartData = safeCampaigns
-  .filter((c) => c.status === "sent")
-  .slice(-6)
-  .map((c) => ({
-    name:   c.name.slice(0, 12),
-    opens:  c.openCount  ?? 0,
-    clicks: c.clickCount ?? 0,
-  }));
+  const chartData = campaigns
+    .filter((c) => c.status === "sent")
+    .slice(-6)
+    .map((c) => ({
+      name:   c.name.slice(0, 12),
+      opens:  c.openCount  ?? 0,
+      clicks: c.clickCount ?? 0,
+    }));
 
   return (
     <div className="p-8">
