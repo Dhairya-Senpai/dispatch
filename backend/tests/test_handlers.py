@@ -7,7 +7,7 @@ import pytest
 import boto3
 import os
 from unittest.mock import patch, MagicMock
-from moto import mock_dynamodb, mock_sqs, mock_ses
+from moto import mock_aws
 
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
@@ -68,17 +68,16 @@ def test_validate_email():
 
 # ── Track event tests ─────────────────────────────────────────────────────────
 
-@mock_dynamodb
+@mock_aws
 def test_track_open_returns_pixel(monkeypatch):
     # Setup DynamoDB tables
     _setup_dynamodb_tables()
 
     monkeypatch.setenv("TRACKING_BASE_URL", "")
-    sys.path.insert(0, "backend/lambdas/track_event")
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../lambdas/track_event"))
 
-    # Re-import to pick up env
     import importlib
-    import backend.lambdas.track_event.handler as h
+    import handler as h
     importlib.reload(h)
 
     event = {
@@ -95,13 +94,14 @@ def test_track_open_returns_pixel(monkeypatch):
     assert response["isBase64Encoded"] is True
 
 
-@mock_dynamodb
+@mock_aws
 def test_track_click_redirects(monkeypatch):
     _setup_dynamodb_tables()
     monkeypatch.setenv("TRACKING_BASE_URL", "https://dispatch.example.com")
 
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../lambdas/track_event"))
     import importlib
-    import backend.lambdas.track_event.handler as h
+    import handler as h
     importlib.reload(h)
 
     event = {
@@ -124,8 +124,9 @@ def test_track_click_redirects(monkeypatch):
 def test_track_click_rejects_invalid_url(monkeypatch):
     monkeypatch.setenv("TRACKING_BASE_URL", "https://dispatch.example.com")
 
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../lambdas/track_event"))
     import importlib
-    import backend.lambdas.track_event.handler as h
+    import handler as h
     importlib.reload(h)
 
     event = {
