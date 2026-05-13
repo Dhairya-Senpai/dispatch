@@ -1,0 +1,7 @@
+environment     = "dev"
+aws_region      = "us-east-1"
+domain_name     = "dispatch-dev.yourdomain.com"
+replica_regions = []
+
+# Set via environment variable: export TF_VAR_gemini_api_key=...
+# gemini_api_key = ""
