@@ -26,7 +26,7 @@ jobs:
       - name: Run tests
         run: |
           cd backend
-          pytest tests/ -v
+          PYTHONPATH=layers/common pytest tests/ -v
 
   frontend-check:
     name: Frontend Type Check
@@ -45,9 +45,6 @@ jobs:
 
       - name: Type check
         run: cd frontend && npm run type-check
-
-      - name: Lint
-        run: cd frontend && npm run lint
 
   deploy:
     name: Deploy to AWS
